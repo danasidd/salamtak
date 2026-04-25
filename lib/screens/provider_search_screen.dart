@@ -22,6 +22,7 @@ class _ProviderSearchScreenState extends State<ProviderSearchScreen> {
   String? _selectedSpecialty;
   String? _selectedCity;
   String? _selectedInsurance;
+  String? _selectedLanguage;
 
   @override
   void initState() {
@@ -64,7 +65,12 @@ class _ProviderSearchScreenState extends State<ProviderSearchScreen> {
         insuranceMatch = p.insuranceAccepted.contains(_selectedInsurance);
       }
 
-      return nameMatch && specialtyMatch && cityMatch && insuranceMatch;
+      bool languageMatch = true;
+      if (_selectedLanguage != null && _selectedLanguage!.isNotEmpty) {
+        languageMatch = p.languagesSpoken.contains(_selectedLanguage);
+      }
+
+      return nameMatch && specialtyMatch && cityMatch && insuranceMatch && languageMatch;
     }).toList();
   }
 
@@ -75,6 +81,25 @@ class _ProviderSearchScreenState extends State<ProviderSearchScreen> {
     final filtered = _filtered(isArabic);
     final specialties = getSpecialties(isArabic);
     final cities = getCities(isArabic);
+    final languages = getLanguages();
+
+    final selectedInsuranceName = _selectedInsurance != null
+        ? (isArabic
+            ? mockInsurers
+                .firstWhere((i) => i.id == _selectedInsurance,
+                    orElse: () => mockInsurers.first)
+                .nameAr
+            : mockInsurers
+                .firstWhere((i) => i.id == _selectedInsurance,
+                    orElse: () => mockInsurers.first)
+                .nameEn)
+        : null;
+
+    final selectedLanguageLabel = _selectedLanguage != null
+        ? (isArabic
+            ? translateLanguageToAr(_selectedLanguage!)
+            : _selectedLanguage!)
+        : null;
 
     return Scaffold(
       appBar: AppBar(
@@ -112,6 +137,7 @@ class _ProviderSearchScreenState extends State<ProviderSearchScreen> {
                   onTap: () => _showFilterSheet(
                     context,
                     title: l10n.specialty,
+                    allLabel: l10n.allSpecialties,
                     options: specialties,
                     selected: _selectedSpecialty,
                     onSelect: (v) => setState(() => _selectedSpecialty = v),
@@ -124,6 +150,7 @@ class _ProviderSearchScreenState extends State<ProviderSearchScreen> {
                   onTap: () => _showFilterSheet(
                     context,
                     title: l10n.city,
+                    allLabel: l10n.allCities,
                     options: cities,
                     selected: _selectedCity,
                     onSelect: (v) => setState(() => _selectedCity = v),
@@ -131,14 +158,15 @@ class _ProviderSearchScreenState extends State<ProviderSearchScreen> {
                 ),
                 const SizedBox(width: 8),
                 _FilterChip(
-                  label: _selectedInsurance != null
-                      ? mockInsurers
-                          .firstWhere((i) => i.id == _selectedInsurance,
-                              orElse: () => mockInsurers.first)
-                          .nameEn
-                      : l10n.insurance,
+                  label: selectedInsuranceName ?? l10n.insurance,
                   selected: _selectedInsurance != null,
                   onTap: () => _showInsuranceSheet(context, l10n, isArabic),
+                ),
+                const SizedBox(width: 8),
+                _FilterChip(
+                  label: selectedLanguageLabel ?? l10n.filterLanguage,
+                  selected: _selectedLanguage != null,
+                  onTap: () => _showLanguageSheet(context, l10n, isArabic, languages),
                 ),
               ],
             ),
@@ -189,6 +217,7 @@ class _ProviderSearchScreenState extends State<ProviderSearchScreen> {
   void _showFilterSheet(
     BuildContext context, {
     required String title,
+    required String allLabel,
     required List<String> options,
     String? selected,
     required void Function(String?) onSelect,
@@ -210,7 +239,7 @@ class _ProviderSearchScreenState extends State<ProviderSearchScreen> {
             ),
             const Divider(height: 1),
             ListTile(
-              title: const Text('All'),
+              title: Text(allLabel),
               leading: Icon(
                 selected == null ? Icons.radio_button_checked : Icons.radio_button_unchecked,
                 color: AppColors.primary,
@@ -277,6 +306,59 @@ class _ProviderSearchScreenState extends State<ProviderSearchScreen> {
                 ),
                 onTap: () {
                   setState(() => _selectedInsurance = ins.id);
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showLanguageSheet(
+    BuildContext context,
+    AppLocalizations l10n,
+    bool isArabic,
+    List<String> languages,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(l10n.filterLanguage,
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.w700)),
+            ),
+            const Divider(height: 1),
+            ListTile(
+              title: Text(l10n.allLanguages),
+              leading: Icon(
+                _selectedLanguage == null ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+                color: AppColors.primary,
+              ),
+              onTap: () {
+                setState(() => _selectedLanguage = null);
+                Navigator.pop(context);
+              },
+            ),
+            ...languages.map(
+              (lang) => ListTile(
+                title: Text(isArabic ? translateLanguageToAr(lang) : lang),
+                leading: Icon(
+                  _selectedLanguage == lang ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+                  color: AppColors.primary,
+                ),
+                onTap: () {
+                  setState(() => _selectedLanguage = lang);
                   Navigator.pop(context);
                 },
               ),

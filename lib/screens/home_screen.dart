@@ -15,11 +15,11 @@ import 'settings_screen.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  String _greeting(AppLocalizations l10n) {
+  String _greeting(AppLocalizations l10n, String name) {
     final hour = DateTime.now().hour;
-    if (hour < 12) return l10n.goodMorning;
-    if (hour < 17) return l10n.goodAfternoon;
-    return l10n.goodEvening;
+    if (hour < 12) return l10n.goodMorning(name);
+    if (hour < 17) return l10n.goodAfternoon(name);
+    return l10n.goodEvening(name);
   }
 
   @override
@@ -27,6 +27,9 @@ class HomeScreen extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final isArabic = context.watch<LanguageProvider>().isArabic;
     final caregiver = context.watch<CaregiverProvider>();
+    final greetingName = caregiver.enabled && caregiver.name.isNotEmpty
+        ? caregiver.name
+        : (isArabic ? 'صديقي' : 'there');
 
     final featuredProviders = mockProviders.take(4).toList();
 
@@ -70,7 +73,7 @@ class HomeScreen extends StatelessWidget {
         children: [
           // Greeting
           Text(
-            _greeting(l10n),
+            _greeting(l10n, greetingName),
             style: const TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.w700,

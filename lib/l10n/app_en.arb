@@ -56,12 +56,21 @@
   "@about": {"description": "About section title"},
   "aboutText": "Salamtak helps Jordanians navigate healthcare — finding the right provider, understanding insurance, and triaging symptoms before visiting a clinic.",
   "@aboutText": {"description": "About description text"},
-  "goodMorning": "Good morning, Dana 👋",
-  "@goodMorning": {"description": "Morning greeting"},
-  "goodAfternoon": "Good afternoon, Dana 👋",
-  "@goodAfternoon": {"description": "Afternoon greeting"},
-  "goodEvening": "Good evening, Dana 👋",
-  "@goodEvening": {"description": "Evening greeting"},
+  "goodMorning": "Good morning, {name} 👋",
+  "@goodMorning": {
+    "description": "Morning greeting",
+    "placeholders": {"name": {"type": "String"}}
+  },
+  "goodAfternoon": "Good afternoon, {name} 👋",
+  "@goodAfternoon": {
+    "description": "Afternoon greeting",
+    "placeholders": {"name": {"type": "String"}}
+  },
+  "goodEvening": "Good evening, {name} 👋",
+  "@goodEvening": {
+    "description": "Evening greeting",
+    "placeholders": {"name": {"type": "String"}}
+  },
   "featuredProviders": "Featured Providers",
   "@featuredProviders": {"description": "Featured providers section title"},
   "quickAccess": "Quick Access",
@@ -90,6 +99,10 @@
   "@allCities": {"description": "All cities filter option"},
   "allInsurance": "All Insurance",
   "@allInsurance": {"description": "All insurance filter option"},
+  "allLanguages": "All Languages",
+  "@allLanguages": {"description": "All languages filter option"},
+  "filterLanguage": "Language",
+  "@filterLanguage": {"description": "Language filter chip label"},
   "noProvidersFound": "No providers found",
   "@noProvidersFound": {"description": "No providers found message"},
   "tryAdjustingFilters": "Try adjusting your search or filters",

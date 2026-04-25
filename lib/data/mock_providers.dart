@@ -273,3 +273,21 @@ List<String> getCities(bool isArabic) {
   }
   return cities.toList()..sort();
 }
+
+List<String> getLanguages() {
+  final langs = <String>{};
+  for (final p in mockProviders) {
+    langs.addAll(p.languagesSpoken);
+  }
+  return langs.toList()..sort();
+}
+
+String translateLanguageToAr(String lang) {
+  switch (lang.toLowerCase()) {
+    case 'arabic': return 'العربية';
+    case 'english': return 'الإنجليزية';
+    case 'french': return 'الفرنسية';
+    case 'german': return 'الألمانية';
+    default: return lang;
+  }
+}

@@ -85,20 +85,26 @@ class _TriageScreenState extends State<TriageScreen> {
     return TriageOutcome.homeCare;
   }
 
-  String _recommendedSpecialty(bool isArabic) {
+  String _recommendedSpecialtyEn() {
     switch (_bodyArea) {
-      case BodyArea.head:
-        return isArabic ? 'طب الأعصاب' : 'Neurology';
-      case BodyArea.chest:
-        return isArabic ? 'أمراض القلب' : 'Cardiology';
-      case BodyArea.abdomen:
-        return isArabic ? 'طب الجهاز الهضمي' : 'Gastroenterology';
-      case BodyArea.limbs:
-        return isArabic ? 'جراحة العظام' : 'Orthopedics';
-      case BodyArea.skin:
-        return isArabic ? 'أمراض الجلد' : 'Dermatology';
-      default:
-        return isArabic ? 'طب عام' : 'General Practice';
+      case BodyArea.head: return 'Neurology';
+      case BodyArea.chest: return 'Cardiology';
+      case BodyArea.abdomen: return 'General Practice';
+      case BodyArea.limbs: return 'Orthopedics';
+      case BodyArea.skin: return 'Dermatology';
+      default: return 'General Practice';
+    }
+  }
+
+  String _recommendedSpecialtyDisplay(bool isArabic) {
+    if (!isArabic) return _recommendedSpecialtyEn();
+    switch (_bodyArea) {
+      case BodyArea.head: return 'طب الأعصاب';
+      case BodyArea.chest: return 'أمراض القلب';
+      case BodyArea.abdomen: return 'طب عام';
+      case BodyArea.limbs: return 'جراحة العظام';
+      case BodyArea.skin: return 'أمراض الجلد';
+      default: return 'طب عام';
     }
   }
 
@@ -493,7 +499,8 @@ class _TriageScreenState extends State<TriageScreen> {
 
   Widget _buildResult(AppLocalizations l10n, bool isArabic) {
     final outcome = _computeOutcome();
-    final specialty = _recommendedSpecialty(isArabic);
+    final specialtyEn = _recommendedSpecialtyEn();
+    final specialty = _recommendedSpecialtyDisplay(isArabic);
 
     return ListView(
       padding: const EdgeInsets.all(20),
@@ -539,8 +546,7 @@ class _TriageScreenState extends State<TriageScreen> {
                   onPressed: () => Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (_) => ProviderSearchScreen(
-                        initialSpecialty:
-                            isArabic ? null : specialty,
+                        initialSpecialty: specialtyEn,
                       ),
                     ),
                   ),
